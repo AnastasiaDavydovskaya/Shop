@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Добавить продукт</title>
+    <div th:insert="parts/bootstrap"></div>
+</head>
+<body style="background-color: lightblue">
+<div th:insert="parts/navigation"></div>
+<div style="text-align: center; margin-top: 10%; display:flex; align-items:center; justify-content: center">
+    <form th:action="@{/add/product}" th:object="${productCreated}" method="post" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="title">Название</label>
+            <input type="text" style="width: 400px" th:field="*{title}" id="title" placeholder="Название"
+                   class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="price">Цена</label>
+            <input type="number" min="1" style="width: 400px" th:field="*{price}" id="price" placeholder="Цена"
+                   class="form-control" required>
+        </div>
+        <div>
+            <label>Раздел товаров:</label>
+            <select th:field="*{category.id}">
+                <option th:each="category : ${categories}"
+                        th:value="${category.id}"
+                        th:text="${category.title}">
+                </option>
+            </select>
+        </div>
+        <br>
+        <div class="custom-file">
+            <input type="file" style="width: 400px" class="form-control" name="file" id="file" required>
+            <label class="custom-file-label" for="file">Выберите фото</label>
+        </div>
+        <br>
+        <input type="submit" value="Добавить продукт">
+    </form>
+    <br>
+</div>
+</body>
+<div th:insert="parts/footer"></div>
+</html>

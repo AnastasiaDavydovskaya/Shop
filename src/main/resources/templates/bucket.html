@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Корзина</title>
+    <div th:insert="parts/bootstrap"/>
+</head>
+<body>
+<div th:insert="parts/navigation"></div>
+
+<section class="h-100" style="background-color: #eee;">
+    <div class="container h-100 py-5">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col-10">
+                <div th:if="${bucket.bucketDetails.size() == 0}">
+                    <h1 style="text-align: center">Ваша корзина пуста...</h1>
+                    <div class="h2"
+                         style="text-align: center; display:flex; align-items:center; justify-content: center">
+                        <div>
+                            <img src="/images/empty-bucket.gif" class="card-img-top" style="border-radius: 50%"
+                                 alt="...">
+                        </div>
+                    </div>
+                </div>
+                <div th:unless="${bucket.bucketDetails.size() == 0}">
+                    <div class="card rounded-3 mb-4" th:each="detail : ${bucket.bucketDetails}">
+                        <div class="card-body p-4">
+                            <div class="row d-flex justify-content-between align-items-center">
+                                <div class="col-md-2 col-lg-2 col-xl-2">
+                                    <img th:src="@{/images/{nameOfPhoto}(nameOfPhoto=${detail.nameOfPhoto})}"
+                                         class="img-fluid rounded-3" alt="Ooops">
+                                </div>
+                                <div class="col-md-3 col-lg-3 col-xl-3">
+                                    <p class="lead fw-normal mb-2" th:text="${detail.title}"></p>
+                                    <p><span class="text-muted" th:text="${detail.price}">Price: </span></p>
+                                </div>
+                                <div class="col-md-3 col-lg-3 col-xl-2 d-flex">
+                                    <button class="btn btn-link px-2">
+                                        <a th:href="@{/bucket/minus/product/{productId}(productId=${detail.productId})}">
+                                            <i class="fa fa-minus"></i></a>
+                                    </button>
+                                    <input id="form1" min="1" name="quantity" th:value="${detail.amount}" type="text"
+                                           class="form-control form-control-sm" readonly/>
+                                    <button class="btn btn-link px-2">
+                                        <a th:href="@{/bucket/plus/product/{productId}(productId=${detail.productId})}">
+                                            <i class="fa fa-plus"></i></a>
+                                    </button>
+                                </div>
+                                <div class="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
+                                    <h5 class="mb-0" th:text="${detail.sum}"></h5>
+                                </div>
+                                <div class="col-md-1 col-lg-1 col-xl-1 text-end">
+                                    <a th:href="@{/bucket/delete/{productId}(productId=${detail.productId})}"
+                                       class="text-danger">
+                                        <i class="fa fa-trash fa-lg"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card" style="background-color: darkgray">
+                        <div class="card-body" style="text-align: right">
+                            <h5>Количество товаров: </h5>
+                            <p class="lead fw-normal mb-2" th:text="${bucket.amountProducts}"></p>
+                            <h5>Сумма всего заказа: </h5>
+                            <p class="lead fw-normal mb-2" th:text="${bucket.sum}"></p>
+                            <form th:action="@{/bucket}" method="post">
+                                <button type="submit" class="btn btn-warning btn-block btn-lg">Заказать</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+</body>
+<div th:insert="parts/footer"/>
+</html>

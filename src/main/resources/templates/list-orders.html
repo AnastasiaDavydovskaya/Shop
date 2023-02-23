@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Список заказов</title>
+    <div th:insert="parts/bootstrap"></div>
+</head>
+<body>
+<div th:insert="parts/navigation"></div>
+<div style="text-align: center">
+    <h5>Заказы:</h5>
+</div>
+
+<table class="table table-hover">
+    <thead>
+    <tr>
+        <th scope="col">Пользователь</th>
+        <th scope="col">Продукт</th>
+        <th scope="col">Цена</th>
+        <th scope="col">Количество</th>
+        <th scope="col">Удалить заказ</th>
+    </tr>
+    </thead>
+
+    <tbody th:each="order: ${orders}">
+    <tr>
+        <td th:text="${order.login}" th:rowspan="${order.details.size() + 1}"></td>
+        <td th:text="${order.sum}" th:colspan="3"></td>
+        <td th:rowspan="${order.details.size() + 1}"><a th:href="@{/order/delete/{id}(id=${order.orderId})}">
+            <i class="fa fa-trash"></i></a></td>
+    </tr>
+    <tr th:each="detail: ${order.details}">
+        <td th:text="${detail.product}"></td>
+        <td th:text="${detail.price}"></td>
+        <td th:text="${detail.amount}"></td>
+    </tr>
+    </tbody>
+
+</table>
+
+<div style="text-align: center;">
+    <a th:href="@{/admin/page}">Главная страница администратора</a>
+</div>
+</body>
+<div th:insert="parts/footer"></div>
+</html>

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Магазин</title>
+    <div th:insert="parts/bootstrap"/>
+</head>
+<body>
+<div th:insert="parts/navigation"></div>
+
+<div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="false">
+    <div class="carousel-indicators">
+        <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active"
+                aria-current="true" aria-label="Slide 1"></button>
+        <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1"
+                aria-label="Slide 2"></button>
+        <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="2"
+                aria-label="Slide 3"></button>
+    </div>
+    <div class="carousel-inner">
+        <div class="carousel-item active" style="height: 400px">
+            <img src="/images/cosmetics-1.jpg" class="d-block w-100" alt="...">
+            <div class="carousel-caption d-none d-md-block">
+                <h5>Наша продукция</h5>
+                <p>Работы наших высокопрофессиональных мастеров</p>
+                <button type="button" class="btn btn-secondary btn-lg">Просмотреть каталог</button>
+            </div>
+        </div>
+        <div class="carousel-item" style="height: 400px">
+            <img src="/images/cosmetics-2.jpg" class="d-block w-100" alt="...">
+        </div>
+        <div class="carousel-item" style="height: 400px">
+            <img src="/images/cosmetics-3.jpg" class="d-block w-100" alt="...">
+        </div>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+    </button>
+</div>
+</br>
+</br>
+</br>
+<h2 style="text-align: center" id="goods">Товары</h2><br>
+<li class="nav-item dropdown" style="list-style: none;">
+    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+       aria-expanded="false">
+        Разделы
+    </a>
+    <ul class="dropdown-menu">
+        <a class="dropdown-item" th:href="@{/customer/page#goods}">Все товары</a>
+        <li th:each="category : ${categories}">
+            <a class="dropdown-item" th:href="@{/customer/page/{id}#goods(id=${category.id})}"
+               th:text="${category.title}"></a>
+        </li>
+    </ul>
+</li>
+<br>
+
+<div class="container text-center">
+    <div class="row">
+        <div class="col-4" th:each="product : ${page.content}">
+            <img th:src="@{/images/{nameOfPhoto}(nameOfPhoto=${product.nameOfPhoto})}"
+                 class="card-img-top" style="width: 220px; height: 220px" alt="..."/>
+            <div class="card-body">
+                <h4 th:text="${product.title}"></h4>
+                <p class="card-text" th:text="${product.price}"></p>
+            </div>
+            <form th:action="@{/bucket/{id}#goods(id=${product.id})}" method="post">
+                <button class="btn btn-primary btn-lg btn-block">Добавить в корзину</button>
+            </form>
+            <br><br><br>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <div class="row justify-content-md-center">
+        <div class="pagination-div pagination">
+    <span th:if="${page.hasPrevious()}" class="page-item">
+        <a th:href="@{/customer/page#goods(page=${page.number-1},size=${page.size})}" class="page-link">Предыдущая</a>
+    </span>
+            <th:block th:each="i: ${#numbers.sequence(0, page.totalPages - 1)}" class="page-item">
+                <span th:if="${page.number == i}" class="selected page-link">[[${i}+1]]</span>
+                <span th:unless="${page.number == i}" class="page-link">
+             <a th:href="@{/customer/page#goods(page=${i},size=${page.size})}">[[${i}+1]]</a>
+        </span>
+            </th:block>
+            <span th:if="${page.hasNext()}" class="page-item">
+        <a th:href="@{/customer/page#goods(page=${page.number+1},size=${page.size})}" class="page-link">Следующая</a>
+    </span>
+        </div>
+    </div>
+</div>
+</body>
+<div th:insert="parts/footer"/>
+</html>

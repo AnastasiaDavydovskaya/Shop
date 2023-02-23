@@ -1,0 +1,57 @@
+version: "3"
+
+services:
+
+  todo:
+    build:
+      context: .
+    container_name: shop
+    image: shop:latest
+    ports:
+      - 8080:8080
+    depends_on:
+      - mysql
+    networks:
+      - shop-network
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql:/mysql:3306/shop
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+      - SPRING_FLYWAY_URL=jdbc:mysql://mysql:3306
+
+  mysql:
+    image: mysql:8.0.31
+    container_name: mysql
+    environment:
+      - MYSQL_USER=shop
+      - MYSQL_PASSWORD=shop
+      - MYSQL_ROOT_PASSWORD=root
+    volumes:
+      - database:/var/lib/mysql
+    ports:
+      - 3306:3306
+    networks:
+      - shop-network
+    healthcheck:
+      test: mysqladmin ping -h 127.0.0.1 -u $$MYSQL_USER --password=$$MYSQL_PASSWORD
+
+  localstack:
+    container_name: "${LOCALSTACK_DOCKER_NAME-localstack_main}"
+    image: localstack/localstack
+    ports:
+      - "4566:4566"
+      - "4510-4559:4510-4559"
+    environment:
+      - SERVICES:dynamodb,sns,sqs,s3
+      - DEBUG=${DEBUG-}
+      - LAMBDA_EXECUTOR=${LAMBDA_EXECUTOR-}
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    volumes:
+      - "${LOCALSTACK_VOLUME_DIR:-./volume}:/var/lib/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+
+networks:
+  shop-network:
+
+volumes:
+  database:
