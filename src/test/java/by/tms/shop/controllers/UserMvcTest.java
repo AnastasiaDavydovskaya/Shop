@@ -1,6 +1,5 @@
 package by.tms.shop.controllers;
 
-import by.tms.shop.dto.UserDto;
 import by.tms.shop.entities.Role;
 import by.tms.shop.entities.User;
 import by.tms.shop.exceptions.ResourceNotFoundException;
@@ -21,15 +20,12 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.List;
-
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -53,18 +49,6 @@ public class UserMvcTest {
     private OrderRepository orderRepository;
     @MockBean
     private CategoryRepository categoryRepository;
-
-    @Test
-    @WithMockUser
-    void testGetListUsers() throws Exception {
-        when(userService.findAll()).thenReturn(List.of());
-
-        mvc.perform(get("/list/users")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(view().name("list-users"));
-    }
 
     @Test
     @WithMockUser

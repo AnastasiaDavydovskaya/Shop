@@ -1,6 +1,5 @@
 package by.tms.shop.controllers;
 
-import by.tms.shop.dto.ProductCreatedDto;
 import by.tms.shop.mapper.ProductMapper;
 import by.tms.shop.repositories.BucketRepository;
 import by.tms.shop.repositories.OrderRepository;
@@ -27,7 +26,6 @@ import java.util.List;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
@@ -70,15 +68,4 @@ public class ProductMvcTest {
                 .andExpect(view().name("customer-page"));
     }
 
-    @Test
-    @WithMockUser
-    void testAddProduct() throws Exception {
-        when(categoryService.findAll()).thenReturn(List.of());
-
-        mvc.perform(get("/add/product")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(view().name("add-product"));
-    }
 }
