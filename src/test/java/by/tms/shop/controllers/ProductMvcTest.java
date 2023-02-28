@@ -1,13 +1,16 @@
 package by.tms.shop.controllers;
 
+import by.tms.shop.dto.ProductCreatedDto;
 import by.tms.shop.mapper.ProductMapper;
 import by.tms.shop.repositories.BucketRepository;
 import by.tms.shop.repositories.OrderRepository;
 import by.tms.shop.repositories.ProductRepository;
 import by.tms.shop.repositories.UserRepository;
+import by.tms.shop.services.facade.ProductCategoryServicesFacade;
+import by.tms.shop.services.facade.ProductFileServicesFacade;
 import by.tms.shop.services.impl.CategoryService;
-import by.tms.shop.services.impl.ProductService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -24,8 +27,10 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
@@ -43,10 +48,6 @@ public class ProductMvcTest {
     @MockBean
     private ProductMapper productMapper;
     @MockBean
-    private ProductService productService;
-    @MockBean
-    private CategoryService categoryService;
-    @MockBean
     private ProductRepository productRepository;
     @MockBean
     private UserRepository userRepository;
@@ -54,18 +55,46 @@ public class ProductMvcTest {
     private BucketRepository bucketRepository;
     @MockBean
     private OrderRepository orderRepository;
+    @MockBean
+    private CategoryService categoryService;
+    @MockBean
+    private ProductCategoryServicesFacade productCategoryServicesFacade;
+    @MockBean
+    private ProductFileServicesFacade productFileServicesFacade;
+    private ProductCreatedDto productCreatedDto;
+
+    @BeforeEach
+    public void init() {
+        productCreatedDto = ProductCreatedDto.builder()
+                .title("test")
+                .nameOfPhoto("test.png")
+                .price(1.0)
+                .build();
+    }
 
     @Test
     @WithMockUser
     void testGetCategoryProducts() throws Exception {
-        when(productService.findByCategory(categoryService.findById(1L))).thenReturn(List.of());
+        when(productCategoryServicesFacade.findAllInCategory(1L)).thenReturn(List.of());
         when(categoryService.findAll()).thenReturn(List.of());
 
-        mvc.perform(get("/customer/page/1")
+        mvc.perform(get("/category/1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(view().name("customer-page"));
+    }
+
+    @Test
+    @WithMockUser(authorities = "ADMIN")
+    void testAddProduct() throws Exception {
+        when(categoryService.findAll()).thenReturn(List.of());
+
+        mvc.perform(get("/add/product")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(view().name("add-product"));
     }
 
 }

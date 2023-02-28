@@ -1,6 +1,7 @@
 package by.tms.shop.entities;
 
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.Hibernate;
 
 import javax.persistence.*;
@@ -10,15 +11,11 @@ import java.util.Objects;
 @Getter
 @Setter
 @ToString
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
+@RequiredArgsConstructor
+@SuperBuilder
 @Entity
-public class Bucket {
+public class Bucket extends AbstractEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
     @OneToOne
     @JoinColumn(name = "user_id")
     private User user;
@@ -39,6 +36,6 @@ public class Bucket {
 
     @Override
     public int hashCode() {
-        return getClass().hashCode();
+        return super.hashCode();
     }
 }

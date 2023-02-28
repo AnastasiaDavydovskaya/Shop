@@ -1,10 +1,9 @@
 package by.tms.shop.configs.security;
 
-import by.tms.shop.entities.Role;
+import by.tms.shop.entities.enums.Role;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
@@ -29,12 +28,12 @@ public class WebSecurityConfig {
                 .cors().configurationSource(corsConfigurationSource())
                 .and()
                 .authorizeHttpRequests()
-                .antMatchers("/", "/register", "/images/**").permitAll()
+                .antMatchers("/", "/category/**", "/register", "/images/**").permitAll()
                 .antMatchers("/admin/page", "/list/users", "/add/product").hasAnyAuthority(Role.ADMIN.name())
-                .antMatchers("/bucket", "/customer/page").hasAnyAuthority(Role.CUSTOMER.name())
+                .antMatchers("/bucket").hasAnyAuthority(Role.CUSTOMER.name())
                 .anyRequest().authenticated()
                 .and()
-                .formLogin().loginPage("/login").defaultSuccessUrl("/page", true).permitAll()
+                .formLogin().loginPage("/login").defaultSuccessUrl("/page").permitAll()
                 .and()
                 .logout().logoutSuccessUrl("/").permitAll()
                 .and().build();

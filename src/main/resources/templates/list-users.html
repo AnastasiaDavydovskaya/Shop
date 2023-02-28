@@ -2,10 +2,16 @@
 <html>
 <head>
     <title>Список покупателей</title>
-    <div th:insert="parts/bootstrap"></div>
+    <link th:replace="parts/bootstrap"></div>
 </head>
-<body>
-<div th:insert="parts/navigation"></div>
+<body style="background-color: lightsteelblue">
+<div th:insert="parts/navigation"></div><br>
+<div style="text-align: center;">
+    <form th:action="@{/admin/page}">
+        <button class="btn btn-primary btn-lg btn-block">Главная страница администратора</button>
+    </form>
+</div>
+<br>
 <div style="align-items: center">
     <p>Покупатели:</p>
 </div>
@@ -16,7 +22,7 @@
         <th scope="col">Удалить</th>
     </tr>
 
-    <tr th:each="user: ${users}">
+    <tr th:each="user: ${page.content}">
         <td th:text="${user.username}" />
         <td th:text="${user.password}" />
         <td><a th:href="@{/user/delete/{id}(id=${user.id})}">
@@ -24,8 +30,23 @@
         </td>
     </tr>
 </table>
-<div style="text-align: center;">
-    <a th:href="@{/admin/page}">Главная страница администратора</a>
+<div class="container">
+    <div class="row justify-content-md-center">
+        <div class="pagination-div pagination">
+    <span th:if="${page.hasPrevious()}" class="page-item">
+        <a th:href="@{/list/users(page=${page.number-1},size=${page.size})}" class="page-link">Предыдущая</a>
+    </span>
+            <th:block th:each="i: ${#numbers.sequence(0, page.totalPages - 1)}" class="page-item">
+                <span th:if="${page.number == i}" class="selected page-link">[[${i}+1]]</span>
+                <span th:unless="${page.number == i}" class="page-link">
+             <a th:href="@{/list/users(page=${i},size=${page.size})}">[[${i}+1]]</a>
+        </span>
+            </th:block>
+            <span th:if="${page.hasNext()}" class="page-item">
+        <a th:href="@{/list/users(page=${page.number+1},size=${page.size})}" class="page-link">Следующая</a>
+    </span>
+        </div>
+    </div>
 </div>
 </body>
 <div th:insert="parts/footer"></div>

@@ -2,17 +2,18 @@ package by.tms.shop.services.impl;
 
 
 import by.tms.shop.dto.UserDto;
-import by.tms.shop.entities.Role;
 import by.tms.shop.entities.User;
+import by.tms.shop.exceptions.NotFoundException;
 import by.tms.shop.exceptions.ResourceNotFoundException;
 import by.tms.shop.mapper.UserMapper;
 import by.tms.shop.repositories.UserRepository;
 import by.tms.shop.services.CrudService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.lang.module.ResolutionException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,8 +27,12 @@ public class UserService implements CrudService<UserDto> {
 
     @Override
     public UserDto create(UserDto userDto) {
-        userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
-        userRepository.save(userMapper.toEntity(userDto));
+        if (userDto.getPassword() != null && userDto.getUsername() != null && isUniqueLogin(userDto)) {
+            userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
+            userRepository.save(userMapper.toEntity(userDto));
+        } else {
+            throw new NotFoundException("Пользователь не найден.");
+        }
 
         return userDto;
     }
@@ -44,12 +49,15 @@ public class UserService implements CrudService<UserDto> {
     public UserDto findById(Long id) {
         return userRepository.findById(id)
                 .map(userMapper::toDto)
-                .orElseThrow(() -> new ResourceNotFoundException("Not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Пользователь не найден."));
     }
 
     @Override
-    public void deleteById(Long id) {
-         userRepository.deleteById(id);
+    public UserDto deleteById(Long id) {
+        UserDto userDto = findById(id);
+        userRepository.deleteById(id);
+
+        return userDto;
     }
 
     @Override
@@ -60,6 +68,26 @@ public class UserService implements CrudService<UserDto> {
     }
 
     public User findByLogin(String login) {
-        return userRepository.findByLogin(login);
+        User user = userRepository.findByLogin(login);
+
+        if (user != null) {
+            return user;
+        } else {
+            throw new NotFoundException("Пользователь не найден.");
+        }
+    }
+
+    public Page<UserDto> findAllInPage(Pageable pageable) {
+        return userRepository.findAll(pageable)
+                .map(userMapper::toDto);
+    }
+
+    public boolean isUniqueLogin(UserDto userDto) {
+        List<User> userList = userRepository.findAll()
+                .stream()
+                .filter(user -> !user.getLogin().equals(userDto.getUsername()))
+                .toList();
+
+        return userList.size() == userRepository.findAll().size();
     }
 }

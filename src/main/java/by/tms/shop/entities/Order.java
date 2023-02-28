@@ -1,6 +1,10 @@
 package by.tms.shop.entities;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -8,23 +12,18 @@ import org.hibernate.annotations.UpdateTimestamp;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 @Getter
 @Setter
 @ToString
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@RequiredArgsConstructor
+@SuperBuilder
 @Entity
 @Table(name = "orders")
-public class Order {
+public class Order extends AbstractEntity {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
 	@CreationTimestamp
 	private LocalDateTime created;
 	@UpdateTimestamp
@@ -47,6 +46,6 @@ public class Order {
 
 	@Override
 	public int hashCode() {
-		return getClass().hashCode();
+		return super.hashCode();
 	}
 }

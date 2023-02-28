@@ -7,9 +7,10 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.Hibernate;
 
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
 import java.util.Objects;
 
 @Getter
@@ -17,26 +18,23 @@ import java.util.Objects;
 @ToString
 @RequiredArgsConstructor
 @SuperBuilder
-@Entity
-public class Product extends AbstractEntity {
+@MappedSuperclass
+public class AbstractEntity {
 
-    private String title;
-    private String nameOfPhoto;
-    private Double price;
-    @ManyToOne
-    @JoinColumn(name="category_id")
-    private Category category;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long id;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        Product product = (Product) o;
-        return id != null && Objects.equals(id, product.id);
+        AbstractEntity that = (AbstractEntity) o;
+        return id != null && Objects.equals(id, that.id);
     }
 
     @Override
     public int hashCode() {
-        return super.hashCode();
+        return Objects.hash(id);
     }
 }

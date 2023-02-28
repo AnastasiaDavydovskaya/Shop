@@ -1,7 +1,7 @@
 package by.tms.shop.controllers;
 
 import by.tms.shop.dto.UserDto;
-import by.tms.shop.entities.Role;
+import by.tms.shop.entities.enums.Role;
 import by.tms.shop.services.impl.CategoryService;
 import by.tms.shop.services.impl.ProductService;
 import by.tms.shop.services.impl.UserService;
@@ -26,7 +26,7 @@ public class MainController {
     private CategoryService categoryService;
     private UserService userService;
 
-    @ModelAttribute("user")
+    @ModelAttribute("userDto")
     public UserDto getUser() {
         return UserDto.builder().build();
     }
@@ -37,7 +37,7 @@ public class MainController {
     }
 
     @GetMapping("/register")
-    public String registrationInSystem() {
+    public String register() {
         return "register";
     }
 
@@ -53,7 +53,7 @@ public class MainController {
         }
 
         userService.create(userDto);
-        return "redirect:/customer/page";
+        return "redirect:/login";
     }
 
     @GetMapping("/page")
@@ -63,20 +63,12 @@ public class MainController {
             return "admin-page";
         }
 
-        return "redirect:/customer/page";
+        return "redirect:/";
     }
 
     @GetMapping("/")
     public String getMainPage(@PageableDefault(size = 6) Pageable pageable,
                               Model model) {
-        model.addAttribute("page", productService.findAllInPage(pageable));
-        model.addAttribute("categories", categoryService.findAll());
-        return "main-page";
-    }
-
-    @GetMapping("/customer/page")
-    public String getCustomerPage(@PageableDefault(size = 6) Pageable pageable,
-                                  Model model) {
         model.addAttribute("page", productService.findAllInPage(pageable));
         model.addAttribute("categories", categoryService.findAll());
         return "customer-page";

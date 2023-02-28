@@ -2,10 +2,13 @@ package by.tms.shop.services.impl;
 
 import by.tms.shop.dto.*;
 import by.tms.shop.entities.*;
-import by.tms.shop.exceptions.NotFoundUserException;
+import by.tms.shop.exceptions.NotFoundException;
+import by.tms.shop.mapper.ProductMapper;
 import by.tms.shop.repositories.BucketRepository;
 import by.tms.shop.repositories.ProductRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -20,8 +23,13 @@ public class BucketService {
     private final ProductRepository productRepository;
     private final UserService userService;
     private final OrderService orderService;
+    private final ProductMapper productMapper;
 
     public Bucket createBucket(User user, List<Long> productIds) {
+        if (user == null) {
+            throw new NotFoundException("Пользователь не найден");
+        }
+
         Bucket bucket = new Bucket();
         bucket.setUser(user);
         List<Product> productList = getCollectRefProductsByIds(productIds);
@@ -36,23 +44,22 @@ public class BucketService {
                 .collect(Collectors.toList());
     }
 
-    public Bucket addProducts(Bucket bucket, List<Long> productIds) {
+    public void addProducts(Bucket bucket, List<Long> productIds) {
+        if (bucket == null) {
+            throw new NotFoundException("Корзина пользователя не найдена");
+        }
+
         List<Product> products = bucket.getProducts();
         List<Product> newProductsList = products == null ? new ArrayList<>() : new ArrayList<>(products);
         newProductsList.addAll(getCollectRefProductsByIds(productIds));
         bucket.setProducts(newProductsList);
         bucketRepository.save(bucket);
-
-        return bucket;
     }
 
     public void deleteProduct(Long productId, String login) {
-        User user = userService.findByLogin(login);
-        if (user == null) {
-            throw new NotFoundUserException("Пользователь не найден: " + login);
-        }
-
+        User user = validateUserAndBucket(login);
         Bucket bucket = user.getBucket();
+
         List<Long> productsId = bucket.getProducts().stream()
                 .map(Product::getId)
                 .filter(id -> !id.equals(productId))
@@ -64,40 +71,33 @@ public class BucketService {
         addProducts(bucket, productsId);
     }
 
-    public Bucket minusProduct(Long productId, String login) {
-        User user = userService.findByLogin(login);
-        if (user == null) {
-            throw new NotFoundUserException("Пользователь не найден: " + login);
-        }
-
+    public void minusProduct(Long productId, String login) {
+        User user = validateUserAndBucket(login);
         Bucket bucket = user.getBucket();
 
         List<Product> products = bucket.getProducts();
-        for(Product product: products) {
-            if(product.getId().equals(productId)) {
+        for (Product product : products) {
+            if (product.getId().equals(productId)) {
                 products.remove(product);
                 break;
             }
         }
         bucketRepository.save(bucket);
 
-        return bucket;
     }
 
-    public BucketDto getBucketByUser(String name) {
-        User user = userService.findByLogin(name);
-        if (user == null || user.getBucket() == null) {
-            return new BucketDto();
-        }
+    public BucketDto getBucketByUser(String login) {
+        User user = validateUserAndBucket(login);
+        Bucket bucket = user.getBucket();
 
         BucketDto bucketDto = new BucketDto();
         Map<Long, BucketDetailDto> mapByProductId = new HashMap<>();
 
-        List<Product> products = user.getBucket().getProducts();
+        List<Product> products = bucket.getProducts();
         for (Product product : products) {
             BucketDetailDto detail = mapByProductId.get(product.getId());
             if (detail == null) {
-                mapByProductId.put(product.getId(), new BucketDetailDto(product));
+                mapByProductId.put(product.getId(), productMapper.toBucketDetailDto(product));
             } else {
                 detail.setAmount(detail.getAmount() + 1);
                 detail.setSum(detail.getSum() + product.getPrice());
@@ -110,16 +110,9 @@ public class BucketService {
         return bucketDto;
     }
 
-    public Order commitBucketToOrder(String login) {
-        User user = userService.findByLogin(login);
-        if (user == null) {
-            throw new NotFoundUserException("Пользователь не найден");
-        }
-
+    public void commitBucketToOrder(String login) {
+        User user = validateUserAndBucket(login);
         Bucket bucket = user.getBucket();
-        if (bucket == null || bucket.getProducts().isEmpty()) {
-            throw new NotFoundUserException("Корзина пользователя не найдена");
-        }
 
         Order order = new Order();
         order.setUser(user);
@@ -142,7 +135,19 @@ public class BucketService {
         bucket.getProducts().clear();
         bucketRepository.save(bucket);
 
-        return order;
+    }
+
+    private User validateUserAndBucket(String login) {
+        User user = userService.findByLogin(login);
+        if (user == null) {
+            throw new NotFoundException("Пользователь не найден: " + login);
+        }
+
+        return user;
+    }
+
+    public Page<Bucket> findAllInPage(Pageable pageable) {
+        return bucketRepository.findAll(pageable);
     }
 
 }

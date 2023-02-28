@@ -1,6 +1,7 @@
 package by.tms.shop.entities;
 
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.Hibernate;
 
 import javax.persistence.*;
@@ -10,16 +11,12 @@ import java.util.Objects;
 @Getter
 @Setter
 @ToString
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@RequiredArgsConstructor
+@SuperBuilder
 @Entity
 @Table(name = "orders_details")
-public class OrderDetails {
+public class OrderDetails extends AbstractEntity {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
 	@ManyToOne
 	@JoinColumn(name = "order_id")
 	private Order order;
@@ -46,6 +43,6 @@ public class OrderDetails {
 
 	@Override
 	public int hashCode() {
-		return getClass().hashCode();
+		return super.hashCode();
 	}
 }

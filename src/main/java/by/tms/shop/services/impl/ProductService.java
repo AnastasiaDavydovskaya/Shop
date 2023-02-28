@@ -3,13 +3,11 @@ package by.tms.shop.services.impl;
 import by.tms.shop.dto.CategoryDto;
 import by.tms.shop.dto.ProductCreatedDto;
 import by.tms.shop.dto.ProductDto;
-import by.tms.shop.dto.UserDto;
 import by.tms.shop.entities.Bucket;
-import by.tms.shop.entities.Category;
-import by.tms.shop.entities.Product;
 import by.tms.shop.entities.User;
-import by.tms.shop.exceptions.NotFoundUserException;
+import by.tms.shop.exceptions.NotFoundException;
 import by.tms.shop.exceptions.ResourceNotFoundException;
+import by.tms.shop.exceptions.UploadFailedException;
 import by.tms.shop.mapper.CategoryMapper;
 import by.tms.shop.mapper.ProductMapper;
 import by.tms.shop.repositories.ProductRepository;
@@ -19,7 +17,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.lang.module.ResolutionException;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,9 +33,15 @@ public class ProductService implements CrudService<ProductDto> {
 
     @Override
     public ProductDto create(ProductDto productDto) {
-        String nameOfPhoto = productDto.getNameOfPhoto();
-        if (nameOfPhoto.endsWith(".png") || nameOfPhoto.endsWith(".jpg") || nameOfPhoto.endsWith(".jpeg")) {
-            productRepository.save(productMapper.toEntity(productDto));
+        if (productDto.getTitle() != null && productDto.getPrice() != null) {
+            String nameOfPhoto = productDto.getNameOfPhoto();
+            if (nameOfPhoto.endsWith(".png") || nameOfPhoto.endsWith(".jpg") || nameOfPhoto.endsWith(".jpeg")) {
+                productRepository.save(productMapper.toEntity(productDto));
+            } else {
+                throw new UploadFailedException("Разрешается загружать только картинки.");
+            }
+        } else {
+            throw new UploadFailedException("Продукт не найден.");
         }
 
         return productDto;
@@ -56,12 +59,15 @@ public class ProductService implements CrudService<ProductDto> {
     public ProductDto findById(Long id) {
         return productRepository.findById(id)
                 .map(productMapper::toDto)
-                .orElseThrow(() -> new ResourceNotFoundException("Not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Продукт не найден."));
     }
 
     @Override
-    public void deleteById(Long id) {
+    public ProductDto deleteById(Long id) {
+        ProductDto productDto = findById(id);
         productRepository.deleteById(id);
+
+        return productDto;
     }
 
     @Override
@@ -74,7 +80,7 @@ public class ProductService implements CrudService<ProductDto> {
     public Bucket addToUserBucket(Long productId, String login) {
         User user = userService.findByLogin(login);
         if (user == null) {
-            throw new NotFoundUserException("Пользователь не найден: " + login);
+            throw new NotFoundException("Пользователь не найден: " + login);
         }
 
         Bucket bucket = user.getBucket();
@@ -92,6 +98,8 @@ public class ProductService implements CrudService<ProductDto> {
         String nameOfPhoto = productCreatedDto.getNameOfPhoto();
         if (nameOfPhoto.endsWith(".png") || nameOfPhoto.endsWith(".jpg") || nameOfPhoto.endsWith(".jpeg")) {
             productRepository.save(productMapper.toEntity(productCreatedDto));
+        } else {
+            throw new UploadFailedException("Разрешается загружать только картинки.");
         }
 
         return productCreatedDto;
@@ -106,7 +114,7 @@ public class ProductService implements CrudService<ProductDto> {
         return productRepository.findByCategory(categoryMapper.toEntity(categoryDto))
                 .stream()
                 .map(productMapper::toDto)
-                .collect(Collectors.toList());
+                .toList();
     }
 
 }

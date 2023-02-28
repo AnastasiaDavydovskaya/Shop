@@ -1,6 +1,6 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark" xmlns:sec="http://www.w3.org/1999/xhtml">
     <div class="container-fluid">
-        <a class="navbar-brand" th:href="@{/customer/page}">Меню</a>
+        <a class="navbar-brand" th:href="@{/}">Меню</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
                 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -9,7 +9,8 @@
             <div class="container" style="margin-left: 90%">
                 <a th:href="@{/bucket}"><i style="color: white" class="fa fa-shopping-cart"
                                            aria-hidden="true"></i></a>
-                <a th:href="@{/login}"><i style="color: white; margin-left: 30%; margin-right: 5%" class="fa fa-user-circle" aria-hidden="true"></i></a>
+                <a th:href="@{/login}"><i style="color: white; margin-left: 30%; margin-right: 5%"
+                                          class="fa fa-user-circle" aria-hidden="true"></i></a>
                 <a th:href="@{/logout}"><i style="color: white" class="fa fa-sign-out"
                                            aria-hidden="true"></i></a>
             </div>

@@ -1,6 +1,5 @@
 package by.tms.shop.configs.security;
 
-import by.tms.shop.entities.User;
 import by.tms.shop.services.impl.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -15,8 +14,6 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public CustomUserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userService.findByLogin(username);
-
-        return new CustomUserDetails(user);
+        return new CustomUserDetails(userService.findByLogin(username));
     }
 }

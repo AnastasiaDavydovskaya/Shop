@@ -1,11 +1,15 @@
 package by.tms.shop.services.impl;
 
 import by.tms.shop.dto.CategoryDto;
+import by.tms.shop.dto.ProductDto;
+import by.tms.shop.exceptions.NotFoundException;
 import by.tms.shop.exceptions.ResourceNotFoundException;
 import by.tms.shop.mapper.CategoryMapper;
 import by.tms.shop.repositories.CategoryRepository;
 import by.tms.shop.services.CrudService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.lang.module.ResolutionException;
@@ -21,7 +25,11 @@ public class CategoryService implements CrudService<CategoryDto> {
 
     @Override
     public CategoryDto create(CategoryDto categoryDto) {
-        categoryRepository.save(categoryMapper.toEntity(categoryDto));
+        if(categoryDto != null) {
+            categoryRepository.save(categoryMapper.toEntity(categoryDto));
+        } else {
+            throw new NotFoundException("Категория не найдена.");
+        }
 
         return categoryDto;
     }
@@ -38,12 +46,15 @@ public class CategoryService implements CrudService<CategoryDto> {
     public CategoryDto findById(Long id) {
         return categoryRepository.findById(id)
                 .map(categoryMapper::toDto)
-                .orElseThrow(() -> new ResourceNotFoundException("Not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Категория не найдена."));
     }
 
     @Override
-    public void deleteById(Long id) {
+    public CategoryDto deleteById(Long id) {
+        CategoryDto categoryDto = findById(id);
         categoryRepository.deleteById(id);
+
+        return categoryDto;
     }
 
     @Override

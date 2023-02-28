@@ -1,6 +1,7 @@
 package by.tms.shop.entities;
 
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.Hibernate;
 
 import javax.persistence.*;
@@ -10,15 +11,11 @@ import java.util.Objects;
 @Getter
 @Setter
 @ToString
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
+@RequiredArgsConstructor
+@SuperBuilder
 @Entity
-public class Category {
+public class Category extends AbstractEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
     private String title;
     @OneToMany(mappedBy="category", cascade = CascadeType.ALL)
     @ToString.Exclude
@@ -34,6 +31,6 @@ public class Category {
 
     @Override
     public int hashCode() {
-        return getClass().hashCode();
+        return super.hashCode();
     }
 }

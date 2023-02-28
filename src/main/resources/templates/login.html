@@ -2,7 +2,8 @@
 <html>
 <head>
     <title>Войти</title>
-    <div th:insert="parts/bootstrap"></div>
+    <link th:replace="parts/bootstrap">
+    </div>
 </head>
 <body style="background-color: lightskyblue">
 <div th:insert="parts/navigation"></div>
@@ -11,9 +12,6 @@
     <div style="text-align: center;">
         <h1>Добро пожаловать!</h1>
         <h3>Войдите в систему!</h3>
-    </div>
-    <div th:if="${param.error}">
-        Неверные пароль или логин.
     </div>
     <div class="container">
         <div class="container-class" style="margin-left: 20%">
@@ -25,6 +23,9 @@
             <div class="mb-3 col-8">
                 <label for="pass" class="form-label">Пароль</label>
                 <input type="password" class="form-control" id="pass" name="password">
+            </div>
+            <div th:if="${param.error}" class="alert alert-danger col-8" role="alert">
+                Неверные пароль или логин.
             </div>
             <button type="submit" class="btn btn-primary">Войти</button>
         </div>

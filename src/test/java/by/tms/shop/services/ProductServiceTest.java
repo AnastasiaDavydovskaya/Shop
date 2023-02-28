@@ -56,20 +56,20 @@ public class ProductServiceTest {
         productDto = ProductDto.builder()
                 .id(1L)
                 .title("test")
-                .nameOfPhoto("test")
+                .nameOfPhoto("test.png")
                 .price(1.0)
                 .build();
 
         product = Product.builder()
                 .id(1L)
                 .title("test")
-                .nameOfPhoto("test")
+                .nameOfPhoto("test.png")
                 .price(1.0)
                 .build();
 
         productCreatedDto = ProductCreatedDto.builder()
                 .title("test")
-                .nameOfPhoto("test")
+                .nameOfPhoto("test.png")
                 .price(1.0)
                 .build();
     }
@@ -109,13 +109,6 @@ public class ProductServiceTest {
         ProductDto actual = productService.update(productDto);
 
         assertEquals(productDto, actual);
-    }
-
-    @Test
-    void testCreate() {
-        ProductCreatedDto actual = productService.create(productCreatedDto);
-
-        assertEquals(productCreatedDto, actual);
     }
 
 

@@ -2,29 +2,26 @@ package by.tms.shop.controllers;
 
 import by.tms.shop.dto.BucketDto;
 import by.tms.shop.entities.User;
-import by.tms.shop.repositories.ProductRepository;
 import by.tms.shop.services.impl.BucketService;
 import by.tms.shop.services.impl.ProductService;
 import by.tms.shop.utils.AuthUtils;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 
 @Controller
 @AllArgsConstructor
 public class BucketController {
 
     private final ProductService productService;
-    private BucketService bucketService;
+    private final BucketService bucketService;
 
     @GetMapping("/bucket")
     public String bucketByUser(Model model) {
@@ -46,9 +43,9 @@ public class BucketController {
     }
 
     @PostMapping("/bucket/{id}")
-    public String addToBucket(@PathVariable Long id) {
+    public String addToBucket(@PathVariable Long id, HttpServletRequest request) {
         productService.addToUserBucket(id, AuthUtils.getCurrentUser().getLogin());
-        return "redirect:/customer/page";
+        return "redirect:" + request.getHeader("Referer");
     }
 
     @PostMapping("/bucket")
@@ -70,6 +67,12 @@ public class BucketController {
     public String plusProduct(@PathVariable Long id) {
         productService.addToUserBucket(id, AuthUtils.getCurrentUser().getLogin());
         return "redirect:/bucket";
+    }
+
+    @GetMapping("/list/buckets")
+    public String getListUsers(@PageableDefault(size = 5) Pageable pageable, Model model) {
+        model.addAttribute("page", bucketService.findAllInPage(pageable));
+        return "list-buckets";
     }
 
 }

@@ -1,6 +1,5 @@
 package by.tms.shop.dto;
 
-import by.tms.shop.entities.Category;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

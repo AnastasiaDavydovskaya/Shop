@@ -1,28 +1,19 @@
 package by.tms.shop.services;
 
 import by.tms.shop.dto.OrderDto;
-import by.tms.shop.dto.UserDto;
 import by.tms.shop.entities.Order;
-import by.tms.shop.entities.Role;
-import by.tms.shop.entities.User;
 import by.tms.shop.mapper.OrderMapper;
-import by.tms.shop.mapper.UserMapper;
 import by.tms.shop.repositories.OrderRepository;
-import by.tms.shop.repositories.UserRepository;
 import by.tms.shop.services.impl.OrderService;
-import by.tms.shop.services.impl.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;

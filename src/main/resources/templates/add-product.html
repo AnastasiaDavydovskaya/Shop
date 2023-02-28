@@ -2,11 +2,18 @@
 <html>
 <head>
     <title>Добавить продукт</title>
-    <div th:insert="parts/bootstrap"></div>
+    <link th:replace="parts/bootstrap">
+    </div>
 </head>
-<body style="background-color: lightblue">
-<div th:insert="parts/navigation"></div>
-<div style="text-align: center; margin-top: 10%; display:flex; align-items:center; justify-content: center">
+<body style="background-color: lightsteelblue">
+<div th:insert="parts/navigation"></div><br>
+<div style="text-align: center;">
+    <form th:action="@{/admin/page}">
+        <button class="btn btn-primary btn-lg btn-block">Главная страница администратора</button>
+    </form>
+</div>
+<br>
+<div style="text-align: center; margin-top: 5%; display:flex; align-items:center; justify-content: center">
     <form th:action="@{/add/product}" th:object="${productCreated}" method="post" enctype="multipart/form-data">
         <div class="form-group">
             <label for="title">Название</label>

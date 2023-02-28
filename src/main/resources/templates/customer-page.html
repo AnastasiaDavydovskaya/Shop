@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <head>
     <title>Магазин</title>
-    <div th:insert="parts/bootstrap"/>
+    <link th:replace="parts/bootstrap"/>
 </head>
 <body>
 <div th:insert="parts/navigation"></div>
@@ -21,8 +22,7 @@
             <img src="/images/cosmetics-1.jpg" class="d-block w-100" alt="...">
             <div class="carousel-caption d-none d-md-block">
                 <h5>Наша продукция</h5>
-                <p>Работы наших высокопрофессиональных мастеров</p>
-                <button type="button" class="btn btn-secondary btn-lg">Просмотреть каталог</button>
+                <p>Ассортимент доступен во всех наших магазинах</p>
             </div>
         </div>
         <div class="carousel-item" style="height: 400px">
@@ -42,6 +42,9 @@
     </button>
 </div>
 </br>
+<div th:if="${#authentication.name} != anonymousUser">
+    <div th:text="'Вы, ' + ${#authentication.name} + ', вошли в ситему'"></div>
+</div>
 </br>
 </br>
 <h2 style="text-align: center" id="goods">Товары</h2><br>
@@ -51,9 +54,9 @@
         Разделы
     </a>
     <ul class="dropdown-menu">
-        <a class="dropdown-item" th:href="@{/customer/page#goods}">Все товары</a>
+        <a class="dropdown-item" th:href="@{/#goods}">Все товары</a>
         <li th:each="category : ${categories}">
-            <a class="dropdown-item" th:href="@{/customer/page/{id}#goods(id=${category.id})}"
+            <a class="dropdown-item" th:href="@{/category/{id}#goods(id=${category.id})}"
                th:text="${category.title}"></a>
         </li>
     </ul>
@@ -80,16 +83,16 @@
     <div class="row justify-content-md-center">
         <div class="pagination-div pagination">
     <span th:if="${page.hasPrevious()}" class="page-item">
-        <a th:href="@{/customer/page#goods(page=${page.number-1},size=${page.size})}" class="page-link">Предыдущая</a>
+        <a th:href="@{/#goods(page=${page.number-1},size=${page.size})}" class="page-link">Предыдущая</a>
     </span>
             <th:block th:each="i: ${#numbers.sequence(0, page.totalPages - 1)}" class="page-item">
                 <span th:if="${page.number == i}" class="selected page-link">[[${i}+1]]</span>
                 <span th:unless="${page.number == i}" class="page-link">
-             <a th:href="@{/customer/page#goods(page=${i},size=${page.size})}">[[${i}+1]]</a>
+             <a th:href="@{/#goods(page=${i},size=${page.size})}">[[${i}+1]]</a>
         </span>
             </th:block>
             <span th:if="${page.hasNext()}" class="page-item">
-        <a th:href="@{/customer/page#goods(page=${page.number+1},size=${page.size})}" class="page-link">Следующая</a>
+        <a th:href="@{/#goods(page=${page.number+1},size=${page.size})}" class="page-link">Следующая</a>
     </span>
         </div>
     </div>

@@ -1,11 +1,13 @@
 package by.tms.shop.controllers;
 
-import by.tms.shop.entities.Role;
+import by.tms.shop.dto.UserDto;
+import by.tms.shop.entities.enums.Role;
 import by.tms.shop.entities.User;
 import by.tms.shop.exceptions.ResourceNotFoundException;
 import by.tms.shop.repositories.*;
 import by.tms.shop.services.impl.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -16,9 +18,16 @@ import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfigurat
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
@@ -26,6 +35,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -49,25 +59,25 @@ public class UserMvcTest {
     private OrderRepository orderRepository;
     @MockBean
     private CategoryRepository categoryRepository;
+    private User user;
+
+    @BeforeEach
+    public void init() {
+        user = User.builder()
+                .login("test-test")
+                .password("test-test")
+                .role(Role.CUSTOMER)
+                .build();
+    }
 
     @Test
     @WithMockUser
     void testDeleteByIdNotFound() throws Exception {
-        String username = "test";
-        User user = User.builder()
-                .login(username)
-                .password("test")
-                .role(Role.CUSTOMER)
-                .build();
-
-        when(userRepository.findByLogin(anyString())).thenReturn(user);
-        doThrow(new ResourceNotFoundException("Not found")).when(userService).deleteById(1L);
+        doThrow(new ResourceNotFoundException("Пользователь не найден")).when(userService).deleteById(1L);
 
         mvc.perform(get("/user/delete/1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
-                .andExpect(status().isNotFound());
+                .andExpect(status().isBadRequest());
     }
-
-
 }

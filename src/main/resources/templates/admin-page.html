@@ -2,9 +2,9 @@
 <html>
 <head>
     <title>Страница администратора</title>
-    <div th:insert="parts/bootstrap"></div>
+    <link th:replace="parts/bootstrap"></div>
 </head>
-<body style="background-color: lightblue">
+<body style="background-color: lightsteelblue">
 <div th:insert="parts/navigation"></div>
 <div style="text-align: center; margin-top: 10%">
     <form th:action="@{/list/users}">
@@ -15,6 +15,9 @@
     </form><br>
     <form th:action="@{/list/orders}">
         <button class="btn btn-primary btn-lg btn-block">Список заказов</button>
+    </form><br>
+    <form th:action="@{/list/buckets}">
+        <button class="btn btn-primary btn-lg btn-block">Список товаров в корзине</button>
     </form><br>
 </div>
 </body>

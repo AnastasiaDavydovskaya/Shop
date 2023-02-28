@@ -1,6 +1,8 @@
 package by.tms.shop.entities;
 
+import by.tms.shop.entities.enums.Role;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.Hibernate;
 
 import javax.persistence.*;
@@ -8,15 +10,12 @@ import java.util.Objects;
 
 @Getter
 @Setter
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
+@ToString
+@RequiredArgsConstructor
+@SuperBuilder
 @Entity
-public class User {
+public class User extends AbstractEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
     private String login;
     private String password;
     @Enumerated(EnumType.STRING)
@@ -34,6 +33,6 @@ public class User {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return super.hashCode();
     }
 }
