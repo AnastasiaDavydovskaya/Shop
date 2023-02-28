@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Войти</title>
+    <link th:replace="parts/bootstrap">
+    </div>
+</head>
+<body style="background-color: lightskyblue">
+<div th:insert="parts/navigation"></div>
+<br>
+<form th:action="@{/login}" method="post">
+    <div style="text-align: center;">
+        <h1>Добро пожаловать!</h1>
+        <h3>Войдите в систему!</h3>
+    </div>
+    <div class="container">
+        <div class="container-class" style="margin-left: 20%">
+            <div class="mb-3 col-8">
+                <label for="login" class="form-label">Логин</label>
+                <input type="text" class="form-control" id="login" name="username" aria-describedby="loginHelp">
+                <div id="loginHelp" class="form-text">Введите свой логин</div>
+            </div>
+            <div class="mb-3 col-8">
+                <label for="pass" class="form-label">Пароль</label>
+                <input type="password" class="form-control" id="pass" name="password">
+            </div>
+            <div th:if="${param.error}" class="alert alert-danger col-8" role="alert">
+                Неверные пароль или логин.
+            </div>
+            <button type="submit" class="btn btn-primary">Войти</button>
+        </div>
+    </div>
+</form>
+<div style="text-align: center;">
+    <a th:href="@{/register}">Зарегистрироваться в системе</a>
+</div>
+</body>
+<div th:insert="parts/footer"></div>
+</html>

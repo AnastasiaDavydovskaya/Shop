@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Страница администратора</title>
+    <link th:replace="parts/bootstrap"></div>
+</head>
+<body style="background-color: lightsteelblue">
+<div th:insert="parts/navigation"></div>
+<div style="text-align: center; margin-top: 10%">
+    <form th:action="@{/list/users}">
+        <button class="btn btn-primary btn-lg btn-block">Список покупателей</button>
+    </form><br>
+    <form th:action="@{/add/product}">
+        <button class="btn btn-primary btn-lg btn-block">Добавить продукт</button>
+    </form><br>
+    <form th:action="@{/list/orders}">
+        <button class="btn btn-primary btn-lg btn-block">Список заказов</button>
+    </form><br>
+    <form th:action="@{/list/buckets}">
+        <button class="btn btn-primary btn-lg btn-block">Список товаров в корзине</button>
+    </form><br>
+</div>
+</body>
+<div th:insert="parts/footer"></div>
+</html>

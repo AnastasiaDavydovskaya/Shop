@@ -1,0 +1,17 @@
+<html>
+<head>
+    <title>Ошибка</title>
+    <link th:replace="parts/bootstrap"/>
+</head>
+<body style="background-color: lightblue">
+<div th:insert="parts/navigation"/><br>
+<h2 style="text-align: center">Извините, страница не найдена...</h2>
+<p th:utext="${errorMessage}"></p>
+<div class="h2" style="text-align: center; display:flex; align-items:center; justify-content: center">
+    <div>
+        <img src="/images/ooops.gif" class="card-img-top" style="border-radius: 50%" alt="...">
+    </div>
+</div>
+</body>
+<div th:insert="parts/footer"/>
+</html>

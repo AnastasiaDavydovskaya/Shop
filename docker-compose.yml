@@ -1,0 +1,42 @@
+version: "3"
+
+services:
+
+  shop:
+    build:
+      context: .
+    container_name: shop
+    image: shop:latest
+    ports:
+      - 8080:8080
+    depends_on:
+      - mysql
+    networks:
+      - shop-network
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/shop
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+      - SPRING_FLYWAY_URL=jdbc:mysql://mysql:3306
+
+  mysql:
+    image: mysql:8.0.31
+    container_name: mysql
+    environment:
+      - MYSQL_USER=shop
+      - MYSQL_PASSWORD=shop
+      - MYSQL_ROOT_PASSWORD=root
+    volumes:
+      - database:/var/lib/mysql
+    ports:
+      - 3306:3306
+    networks:
+      - shop-network
+    healthcheck:
+      test: mysqladmin ping -h 127.0.0.1 -u $$MYSQL_USER --password=$$MYSQL_PASSWORD
+
+networks:
+  shop-network:
+
+volumes:
+  database:
