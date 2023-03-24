@@ -10,8 +10,11 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.validation.Valid;
 
 @Controller
 @AllArgsConstructor
@@ -26,7 +29,7 @@ public class ProductController {
         return ProductDto.builder().build();
     }
 
-    @ModelAttribute("productCreated")
+    @ModelAttribute("productCreatedDto")
     public ProductCreatedDto getProductCreated() {
         return ProductCreatedDto.builder().build();
     }
@@ -51,8 +54,13 @@ public class ProductController {
     }
 
     @PostMapping("/add/product")
-    public String saveProduct(@RequestParam("file") MultipartFile file, ProductCreatedDto productCreatedDto) {
-        productCreatedDto.setNameOfPhoto(file.getOriginalFilename());
+    public String saveProduct(@Valid ProductCreatedDto productCreatedDto, BindingResult bindingResult,
+                              @RequestParam("file") MultipartFile file, Model model) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("categories", categoryService.findAll());
+            return "add-product";
+        }
+
         productFileServicesFacade.saveProduct(file, productCreatedDto);
 
         return "redirect:/admin/page";

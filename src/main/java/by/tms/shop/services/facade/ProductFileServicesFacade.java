@@ -15,8 +15,9 @@ public class ProductFileServicesFacade {
     private final FileService fileService;
 
     public ProductCreatedDto saveProduct(MultipartFile file, ProductCreatedDto productCreatedDto) {
-        productService.create(productCreatedDto);
         fileService.upload(file);
+        productCreatedDto.setNameOfPhoto(file.getOriginalFilename());
+        productService.create(productCreatedDto);
 
         return productCreatedDto;
     }
