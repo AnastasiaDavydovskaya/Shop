@@ -28,7 +28,7 @@ public class WebSecurityConfig {
                 .cors().configurationSource(corsConfigurationSource())
                 .and()
                 .authorizeHttpRequests()
-                .antMatchers("/", "/category/**", "/register", "/images/**").permitAll()
+                .antMatchers("/", "/category/**", "/register", "/images/**", "/files/**").permitAll()
                 .antMatchers("/admin/page", "/list/users", "/add/product").hasAnyAuthority(Role.ADMIN.name())
                 .antMatchers("/bucket").hasAnyAuthority(Role.CUSTOMER.name())
                 .anyRequest().authenticated()
